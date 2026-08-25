@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -44,16 +45,23 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        String path = request.getRequestURI();
+        if (path.startsWith("/")){
+            path = path.substring(1);
+        }
+
+        if (auth instanceof AnonymousAuthenticationToken &&
+                path.startsWith("auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (!(auth instanceof JwtAuthenticationToken)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
             return;
         }
 
         Jwt jwt = ((JwtAuthenticationToken) auth).getToken();
-        String path = request.getRequestURI();
-        if (path.startsWith("/")){
-            path = path.substring(1);
-        }
 
         String method = request.getMethod();
 
@@ -73,18 +81,6 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
                 }
             } else {
                 path = path.replace("api", "");
-                //String[] segments = path.split("/");
-
-                /*List<String> paths = Arrays.stream(segments)
-                        .collect(Collectors.toCollection(ArrayList::new));
-                paths.remove("api");*/
-
-                /*if (paths.isEmpty()) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid resource path");
-                    return;
-                }*/
-
-                //String fullResourceId = String.join("_", paths);
                 this.checkPermissionWithKeycloak(jwt, path, scope);
             }
 

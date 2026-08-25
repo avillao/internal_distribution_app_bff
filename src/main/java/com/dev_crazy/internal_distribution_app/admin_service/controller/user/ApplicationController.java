@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/application")
+@RequestMapping("/api/application")
 public class ApplicationController {
     @Autowired
     private IApplicationService applicationService;

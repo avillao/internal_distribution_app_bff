@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/application")
+@RequestMapping("/api/application")
 public class ArtifactController {
 
     @Autowired
