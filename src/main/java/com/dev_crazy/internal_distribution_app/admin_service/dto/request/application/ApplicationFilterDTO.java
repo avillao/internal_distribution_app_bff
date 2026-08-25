@@ -16,7 +16,7 @@ import java.util.Objects;
 public class ApplicationFilterDTO {
     @Pattern(
             regexp = "^\\w+$", flags = {Pattern.Flag.CASE_INSENSITIVE},
-            message = "No se permiten caracteres especiales"
+            message = "Valor no permitido"
     )
     private String name;
 
@@ -24,7 +24,7 @@ public class ApplicationFilterDTO {
 
     @Pattern(
             regexp = "^([A-Za-z][A-Za-z\\d_]*\\.)+[A-Za-z][A-Za-z\\d_]*$",
-            message = "Formato incorrecto"
+            message = "Valor no permitido"
     )
     private String packageName;
 }

@@ -16,7 +16,7 @@ import java.util.Objects;
 public class ApplicationUpdateDTO {
     @Pattern(
             regexp = "^\\w+$", flags = {Pattern.Flag.CASE_INSENSITIVE},
-            message = "No se permiten caracteres especiales"
+            message = "Valor no permitido"
     )
     private String name;
 

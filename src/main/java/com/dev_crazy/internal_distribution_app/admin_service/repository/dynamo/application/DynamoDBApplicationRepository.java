@@ -1,11 +1,10 @@
-package com.dev_crazy.internal_distribution_app.admin_service.repository.dynamo;
+package com.dev_crazy.internal_distribution_app.admin_service.repository.dynamo.application;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.dev_crazy.internal_distribution_app.admin_service.entity.dynamo.DynamoDBApplication;
 import com.dev_crazy.internal_distribution_app.admin_service.model.Application;
-import com.dev_crazy.internal_distribution_app.admin_service.repository.IApplicationRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;

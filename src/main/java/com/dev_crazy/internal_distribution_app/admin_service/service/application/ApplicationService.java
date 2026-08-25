@@ -3,7 +3,7 @@ package com.dev_crazy.internal_distribution_app.admin_service.service.applicatio
 import com.dev_crazy.internal_distribution_app.admin_service.exception.application.ApplicationAlreadyExistsException;
 import com.dev_crazy.internal_distribution_app.admin_service.exception.application.ApplicationNotFoundException;
 import com.dev_crazy.internal_distribution_app.admin_service.model.Application;
-import com.dev_crazy.internal_distribution_app.admin_service.repository.IApplicationRepository;
+import com.dev_crazy.internal_distribution_app.admin_service.repository.dynamo.application.IApplicationRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +42,10 @@ public class ApplicationService implements IApplicationService{
             throw new ApplicationAlreadyExistsException();
         }
 
-        application.setCreated(new Date());
-        application.setUpdated(new Date());
+        Date currentDate = new Date();
+
+        application.setCreated(currentDate);
+        application.setUpdated(currentDate);
         application.setEnabled(true);
         return applicationRepository.save(application);
     }
