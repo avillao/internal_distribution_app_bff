@@ -1,4 +1,4 @@
-package com.dev_crazy.internal_distribution_app.admin_service.controller;
+package com.dev_crazy.internal_distribution_app.admin_service.controller.admin;
 
 import com.dev_crazy.internal_distribution_app.admin_service.dto.request.application.ApplicationCreateDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.request.application.ApplicationFilterDTO;
@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/application")
-public class ApplicationController {
+@RequestMapping("/admin/application")
+public class AdminApplicationController {
 
     @Autowired
     private IApplicationService applicationService;

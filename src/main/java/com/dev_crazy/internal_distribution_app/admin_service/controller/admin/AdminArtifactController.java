@@ -1,11 +1,9 @@
-package com.dev_crazy.internal_distribution_app.admin_service.controller;
+package com.dev_crazy.internal_distribution_app.admin_service.controller.admin;
 
-import com.dev_crazy.internal_distribution_app.admin_service.dto.request.application.ApplicationFilterDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.request.artifact.ArtifactCreateDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.request.artifact.ArtifactFilterDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.response.ResponseDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.response.artifact.ArtifactInfoDTO;
-import com.dev_crazy.internal_distribution_app.admin_service.model.Application;
 import com.dev_crazy.internal_distribution_app.admin_service.model.Artifact;
 import com.dev_crazy.internal_distribution_app.admin_service.service.artifact.ArtifactService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,19 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("")
-public class ArtifactController {
+@RequestMapping("/admin")
+public class AdminArtifactController {
     @Autowired
     private ModelMapper modelMaper;
 
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     private ArtifactService artifactService;
 
@@ -46,7 +44,7 @@ public class ArtifactController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("resource-application/{resourceApplicationCode}/artifact")
+    @GetMapping("application/{resourceApplicationCode}/artifact")
     private ResponseEntity<ResponseDTO<List<ArtifactInfoDTO>>> findAll(@PathVariable String resourceApplicationCode, @Valid @ModelAttribute ArtifactFilterDTO inputFilters) {
         ResponseDTO<List<ArtifactInfoDTO>> response = new ResponseDTO<>();
 
@@ -64,7 +62,7 @@ public class ArtifactController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("resource-application/{resourceApplicationCode}/artifact/{artifactCode}")
+    @GetMapping("application/{resourceApplicationCode}/artifact/{artifactCode}")
     private ResponseEntity<ResponseDTO<Artifact>> findByCode(@PathVariable String resourceApplicationCode, @PathVariable String artifactCode) {
         ResponseDTO<Artifact> response = new ResponseDTO<>();
 
@@ -74,21 +72,6 @@ public class ArtifactController {
         response.setMessage("OK");
         response.setStatus(200);
         response.setData(artifact);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("resource-application/{resourceApplicationCode}/artifact/latest")
-    private ResponseEntity<ResponseDTO<ArtifactInfoDTO>> findLatest(@PathVariable String resourceApplicationCode) {
-        ResponseDTO<ArtifactInfoDTO> response = new ResponseDTO<>();
-
-        Artifact artifact = artifactService.findLatest(resourceApplicationCode);
-        ArtifactInfoDTO artifactInfoDTO = modelMaper.map(artifact, ArtifactInfoDTO.class);
-
-        response.setError(false);
-        response.setMessage("OK");
-        response.setStatus(200);
-        response.setData(artifactInfoDTO);
 
         return ResponseEntity.ok(response);
     }
