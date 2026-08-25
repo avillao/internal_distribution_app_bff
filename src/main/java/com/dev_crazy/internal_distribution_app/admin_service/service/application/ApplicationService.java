@@ -8,6 +8,8 @@ import com.dev_crazy.internal_distribution_app.admin_service.model.Branch;
 import com.dev_crazy.internal_distribution_app.admin_service.model.Platform;
 import com.dev_crazy.internal_distribution_app.admin_service.repository.dynamo.application.IApplicationRepository;
 import com.dev_crazy.internal_distribution_app.admin_service.service.keycloak.KeycloakAdminService;
+
+import org.keycloak.representations.idm.authorization.ScopeRepresentation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,13 +80,13 @@ public class ApplicationService implements IApplicationService{
         String permissionNameQa = String.format("user_%s_qa_permission", applicationCode);
         String permissionNamePrd = String.format("user_%s_prd_permission", applicationCode);
 
-        Map<String, Object> readScope = keycloakAdminService.getScopeByName("read");
+        String readScope = keycloakAdminService.getScopeId("read");
 
         keycloakAdminService.createClientScopePermission(permissionNameQa,
-                List.of(resourceQaId), List.of(policyIdQa), List.of((String)readScope.get("id")));
+                List.of(resourceQaId), List.of(policyIdQa), List.of(readScope));
 
         keycloakAdminService.createClientScopePermission(permissionNamePrd,
-                List.of(resourcePrdId), List.of(policyIdPrd), List.of((String)readScope.get("id")));
+                List.of(resourcePrdId), List.of(policyIdPrd), List.of(readScope));
 
         Date currentDate = new Date();
 
