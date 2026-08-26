@@ -1,43 +1,34 @@
 package com.dev_crazy.internal_distribution_app.admin_service.filter;
 
+import com.dev_crazy.internal_distribution_app.admin_service.service.keycloak.KeycloakAuthzService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.keycloak.authorization.client.AuthorizationDeniedException;
+import org.keycloak.authorization.client.util.HttpResponseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
 
-    @Value("${keycloak.base-uri}")
-    private String baseUri;
-
     @Value("${keycloak.client_id}")
     private String clientId;
 
-    @Value("${keycloak.realm}")
-    private String realm;
+    @Autowired
+    private KeycloakAuthzService keycloakAuthzService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -81,17 +72,20 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
                 }
             } else {
                 path = path.replace("api", "");
-                this.checkPermissionWithKeycloak(jwt, path, scope);
+                keycloakAuthzService.checkPermission(jwt.getTokenValue(), path.replace("/",""), scope);
             }
 
             filterChain.doFilter(request, response);
-        } catch (WebClientResponseException e){
-            response.sendError(e.getStatusCode().value(), e.getMessage());
-            return;
-        }
-        catch (Exception e) {
+        } catch (HttpResponseException e){
+            response.sendError(e.getStatusCode(), e.getMessage());
+        } catch (AuthorizationDeniedException e){
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+        } catch (Exception e) {
+            if(e.getCause() instanceof HttpResponseException ex){
+                response.sendError(ex.getStatusCode(), e.getMessage());
+                return;
+            }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error validating access");
-            return;
         }
     }
 
@@ -105,29 +99,5 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    private boolean checkPermissionWithKeycloak(Jwt userToken, String resource, String scope) {
-
-        WebClient client = WebClient.create(baseUri);
-        MultiValueMap<String, String> form = MultiValueMap.fromMultiValue(
-                Map.of(
-                "grant_type", List.of("urn:ietf:params:oauth:grant-type:uma-ticket"),
-                "audience", List.of(clientId),
-                "permission", List.of(resource + "#" + scope),
-                "response_mode", List.of("decision"),
-                "permission_resource_format", List.of("uri")
-        ));
-
-        Map response = client.post()
-                .uri(String.format("/realms/%s/protocol/openid-connect/token", realm))
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", "Bearer " + userToken.getTokenValue())
-                .body(BodyInserters.fromFormData(form))
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block();
-
-        return Boolean.TRUE.equals(response.get("result"));
     }
 }
