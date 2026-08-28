@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Objects;
 
@@ -18,14 +19,17 @@ public class ApplicationUpdateDTO {
             regexp = "^[\\w ]+$", flags = {Pattern.Flag.CASE_INSENSITIVE},
             message = "Valor no permitido"
     )
+    @Schema(example = "Internal Distribution API")
     private String name;
 
     @Pattern(
             regexp = "^[A-Za-z0-9áéíóúÁÉÍÓÚñÑüÜ\\s,.:\\-_'\"]{10,255}$", flags = {Pattern.Flag.CASE_INSENSITIVE},
             message = "Valor no permitido"
     )
+    @Schema(example = "API interna para distribuir aplicaciones")
     private String description;
 
+    @Schema(example = "true")
     private Boolean enabled;
 
     @JsonIgnore // Evita que este campo se serialice en la respuesta

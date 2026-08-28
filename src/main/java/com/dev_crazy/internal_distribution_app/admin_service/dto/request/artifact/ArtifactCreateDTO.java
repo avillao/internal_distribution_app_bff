@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +18,7 @@ public class ArtifactCreateDTO {
             regexp = "^(\\d+\\.){1,2}\\d+$",
             message = "Valor no permitido"
     )
+    @Schema(example = "1.0.0")
     private String version;
 
     @NotEmpty(message = "Campo obligatorio")
@@ -24,14 +26,17 @@ public class ArtifactCreateDTO {
             regexp = "^[A-Za-z][A-Za-z\\d_]*$", flags = {Pattern.Flag.CASE_INSENSITIVE},
             message = "Valor no permitido"
     )
+    @Schema(example = "inventory_service")
     private String applicationCode;
 
     @NotEmpty(message = "Campo obligatorio")
     @PlatformValid
+    @Schema(example = "android", allowableValues = {"android", "ios"})
     private String platform;
 
     @NotEmpty(message = "Campo obligatorio")
     @BranchValid
+    @Schema(example = "qa", allowableValues = {"qa", "prd"})
     private String branch;
 
 }

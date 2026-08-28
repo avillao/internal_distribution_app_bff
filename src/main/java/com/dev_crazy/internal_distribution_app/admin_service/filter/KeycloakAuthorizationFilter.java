@@ -31,6 +31,17 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
     private KeycloakAuthzService keycloakAuthzService;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        return path.equals("/auth/login")
+                || path.equals("/auth/refresh")
+                || path.equals("/api-docs")
+                || path.startsWith("/api-docs/")
+                || path.equals("/swagger-ui.html")
+                || path.startsWith("/swagger-ui/");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
