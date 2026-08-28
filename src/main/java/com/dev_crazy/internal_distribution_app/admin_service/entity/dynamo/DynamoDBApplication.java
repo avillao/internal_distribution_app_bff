@@ -18,6 +18,9 @@ public class DynamoDBApplication {
     @DynamoDBAttribute(attributeName = "name")
     private String name;
 
+    @DynamoDBAttribute(attributeName = "description")
+    private String description;
+
     @DynamoDBAttribute(attributeName = "package_name")
     private String packageName;
 

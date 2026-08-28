@@ -15,10 +15,16 @@ import java.util.Objects;
 @NoArgsConstructor
 public class ApplicationUpdateDTO {
     @Pattern(
-            regexp = "^\\w+$", flags = {Pattern.Flag.CASE_INSENSITIVE},
+            regexp = "^[\\w ]+$", flags = {Pattern.Flag.CASE_INSENSITIVE},
             message = "Valor no permitido"
     )
     private String name;
+
+    @Pattern(
+            regexp = "^[A-Za-z0-9áéíóúÁÉÍÓÚñÑüÜ\\s,.:\\-_'\"]{10,255}$", flags = {Pattern.Flag.CASE_INSENSITIVE},
+            message = "Valor no permitido"
+    )
+    private String description;
 
     private Boolean enabled;
 

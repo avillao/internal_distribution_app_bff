@@ -19,10 +19,17 @@ public class ApplicationCreateDTO {
 
     @NotEmpty(message = "Campo obligatorio")
     @Pattern(
-            regexp = "^\\w+$", flags = {Pattern.Flag.CASE_INSENSITIVE},
+            regexp = "^[\\w ]+$", flags = {Pattern.Flag.CASE_INSENSITIVE},
             message = "Valor no permitido"
     )
     private String name;
+
+    @NotEmpty(message = "Campo obligatorio")
+    @Pattern(
+            regexp = "^[A-Za-z0-9áéíóúÁÉÍÓÚñÑüÜ\\s,.:\\-_'\"]{10,255}$", flags = {Pattern.Flag.CASE_INSENSITIVE},
+            message = "Valor no permitido"
+    )
+    private String description;
 
     @NotEmpty(message = "Campo obligatorio")
     @Pattern(

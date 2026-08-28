@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.Configuration;
 import org.keycloak.representations.idm.authorization.AuthorizationRequest;
+import org.keycloak.representations.idm.authorization.AuthorizationRequest.Metadata;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,11 @@ public class KeycloakAuthzService {
     public boolean checkPermission(String accessToken, String resource, String scope) throws AuthorizationDeniedException {
         AuthorizationRequest request = new AuthorizationRequest();
         request.addPermission(resource, scope);
+
+        Metadata metadata= new Metadata();
+        metadata.setPermissionResourceFormat("uri");
+
+        request.setMetadata(metadata);
 
         authzClient.authorization(accessToken).authorize(request);
         return true;

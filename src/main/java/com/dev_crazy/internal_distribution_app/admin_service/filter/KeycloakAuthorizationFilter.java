@@ -72,7 +72,7 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
                 }
             } else {
                 path = path.replace("api", "");
-                keycloakAuthzService.checkPermission(jwt.getTokenValue(), path.replace("/",""), scope);
+                keycloakAuthzService.checkPermission(jwt.getTokenValue(), path, scope);
             }
 
             filterChain.doFilter(request, response);

@@ -1,10 +1,14 @@
 package com.dev_crazy.internal_distribution_app.admin_service.repository.dynamo.application;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.dev_crazy.internal_distribution_app.admin_service.entity.dynamo.DynamoDBApplication;
+import com.dev_crazy.internal_distribution_app.admin_service.entity.dynamo.DynamoDBApplicationResource;
 import com.dev_crazy.internal_distribution_app.admin_service.model.Application;
+import com.dev_crazy.internal_distribution_app.admin_service.model.ApplicationResource;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +65,31 @@ public class DynamoDBApplicationRepository implements IApplicationRepository {
                 DynamoDBApplication.class, scanExpression
         );
         return modelMapper.map(applicationListEntity, new TypeToken<List<Application>>() {}.getType());
+    }
+
+    @Override
+    public List<ApplicationResource> getApplicationResources(String applicationCode) {
+        DynamoDBApplicationResource dynamoDBApplicationResource = new DynamoDBApplicationResource();
+        dynamoDBApplicationResource.setApplicationCode(applicationCode);
+
+        DynamoDBQueryExpression<DynamoDBApplicationResource> queryExpression = new DynamoDBQueryExpression<>();
+        queryExpression.setHashKeyValues(dynamoDBApplicationResource);
+
+        PaginatedQueryList<DynamoDBApplicationResource> dynamoDBdetails = dynamoMapper.query(DynamoDBApplicationResource.class, queryExpression);
+
+        if (dynamoDBdetails.isEmpty()){
+            return List.of();
+        }
+
+        //Set<String> branches = dynamoDBdetails.stream().map(DynamoDBApplicationDetail::getBranch).collect(Collectors.toSet());
+        //Set<String> platforms = dynamoDBdetails.stream().map(DynamoDBApplicationDetail::getPlatform).collect(Collectors.toSet());
+
+        //ApplicationDetail applicationDetail = new ApplicationDetail();
+        //applicationDetail.setApplicationCode(applicationCode);
+        //applicationDetail.setBranches(modelMapper.map(branches, new TypeToken<Branch[]>() {}.getType()));
+        //applicationDetail.setPlatforms(modelMapper.map(platforms, new TypeToken<Platform[]>() {}.getType()));
+
+        return modelMapper.map(dynamoDBdetails, new TypeToken<List<ApplicationResource>>() {}.getType());
     }
 
     @Override
