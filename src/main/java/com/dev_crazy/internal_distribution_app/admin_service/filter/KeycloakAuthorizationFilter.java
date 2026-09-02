@@ -1,6 +1,7 @@
 package com.dev_crazy.internal_distribution_app.admin_service.filter;
 
 import com.dev_crazy.internal_distribution_app.admin_service.service.keycloak.KeycloakAuthzService;
+import com.dev_crazy.internal_distribution_app.admin_service.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,8 +53,7 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
             path = path.substring(1);
         }
 
-        if (auth instanceof AnonymousAuthenticationToken &&
-                path.startsWith("auth")) {
+        if (path.startsWith("auth")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -77,7 +77,7 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
 
         try {
             if (path.startsWith("api/admin")) {
-                if (!hasRole(jwt, "admin")) {
+                if (!JwtUtil.hasRole(jwt, clientId, "admin")) {
                     response.sendError(HttpServletResponse.SC_FORBIDDEN, "Insufficient role");
                     return;
                 }
@@ -100,15 +100,5 @@ public class KeycloakAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean hasRole(Jwt jwtToken, String roleName) {
-        try {
-            Map<String, Object> claims = jwtToken.getClaims();
-            Map<String, Object> resource_access = (Map<String, Object>) claims.get("resource_access");
-            Map<String, Object> client = (Map<String, Object>) resource_access.get(clientId);
-            List<String> roles = (List<String>) client.get("roles");
-            return roles.contains(roleName);
-        } catch (Exception e) {
-            return false;
-        }
-    }
+
 }

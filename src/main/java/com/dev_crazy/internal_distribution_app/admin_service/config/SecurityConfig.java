@@ -1,5 +1,6 @@
 package com.dev_crazy.internal_distribution_app.admin_service.config;
 
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -23,7 +26,33 @@ public class SecurityConfig {
     private String issuer;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    BearerTokenResolver bearerTokenResolver() {
+        DefaultBearerTokenResolver headerResolver =
+                new DefaultBearerTokenResolver();
+
+        return request -> {
+            // 1. Authorization: Bearer ...
+            String token = headerResolver.resolve(request);
+
+            if (token != null) {
+                return token;
+            }
+
+            // 2. Cookie: access_token=...
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    if ("access_token".equals(cookie.getName())) {
+                        return cookie.getValue();
+                    }
+                }
+            }
+
+            return null;
+        };
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, BearerTokenResolver bearerTokenResolver) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/auth/login","/auth/refresh").permitAll()
@@ -31,6 +60,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(resource -> resource
+                        .bearerTokenResolver(bearerTokenResolver)
                         .jwt(Customizer.withDefaults())
                 )
                 .csrf(AbstractHttpConfigurer::disable);
