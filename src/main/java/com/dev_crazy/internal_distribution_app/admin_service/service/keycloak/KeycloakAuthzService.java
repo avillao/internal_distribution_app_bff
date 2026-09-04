@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class KeycloakAuthzService {
 
-    @Value("${keycloak.base-uri}")
+    @Value("${keycloak.base_uri}")
     private String baseUri;
 
     @Value("${keycloak.realm}")

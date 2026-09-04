@@ -1,0 +1,4 @@
+1. Establecer las variables de entorno para el archivo .env siguiendo el ejemplo de .env.example
+2. Ejecutar $ docker compose up -d
+3. Entrar a la consola de keycloak
+4. Al cliente internal_distribution_app asignar los roles del real-management: manage-clients, manage-authorization, view-clients, view-authorization, query-clients

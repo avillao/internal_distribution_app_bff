@@ -1,0 +1,7 @@
+{
+  "realm": "mi-realm",
+  "enabled": true,
+  "accessTokenLifespan": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000
+}

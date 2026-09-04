@@ -39,7 +39,7 @@ public class KeycloakAdminService {
     @Value("${keycloak.realm}")
     private String realm;
 
-    @Value("${keycloak.base-uri}")
+    @Value("${keycloak.base_uri}")
     private String baseUri;
 
     private Keycloak keycloak;

@@ -1,0 +1,38 @@
+name: internal_distribution_app_bff
+services:
+  keycloak-init:
+    container_name: keycloak-init
+    image: quay.io/keycloak/keycloak:26.3.1
+#    depends_on:
+#      keycloak_server:
+#        condition: service_healthy
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - ./init.sh:/opt/keycloak/init.sh:ro
+    entrypoint: [ "/bin/bash" ]
+    command: [ "/opt/keycloak/init.sh" ]
+    networks:
+      - internal_distribution_app
+    restart: "no"
+
+  internal_distribution_app_bff:
+    container_name: internal_distribution_app_bff
+    image: internal_distribution_app_bff
+    environment:
+      - TZ=GMT5
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 53400:53400
+    networks:
+      - internal_distribution_app
+networks:
+  internal_distribution_app:
+    external: true

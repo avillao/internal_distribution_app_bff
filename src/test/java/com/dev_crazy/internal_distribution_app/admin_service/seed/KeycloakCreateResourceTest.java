@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 @SpringBootTest
-@ActiveProfiles("dev")
+@ActiveProfiles("default")
 public class KeycloakCreateResourceTest {
 
     @Autowired
