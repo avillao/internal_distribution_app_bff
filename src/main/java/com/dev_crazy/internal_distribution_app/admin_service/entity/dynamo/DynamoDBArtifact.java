@@ -10,9 +10,10 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamoDBTable(tableName = "artifact")
+@DynamoDBTable(tableName = "internal_distribution_app_dev_tbl_artifact")
 public class DynamoDBArtifact {
     @DynamoDBHashKey(attributeName = "resource_application_code")
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "created_index")
     private String resourceApplicationCode;
 
     @DynamoDBRangeKey(attributeName = "artifact_uuid")
@@ -34,7 +35,7 @@ public class DynamoDBArtifact {
     @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.BOOL)
     private Boolean enabled;
 
-    @DynamoDBIndexRangeKey(localSecondaryIndexName = "created_index")
+    @DynamoDBIndexRangeKey(globalSecondaryIndexName = "created_index")
     private Date created;
 
     @DynamoDBAttribute(attributeName = "updated")

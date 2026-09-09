@@ -62,6 +62,7 @@ services:
       - "4566:4566"
     volumes:
       - floci-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - internal_distribution_app
 

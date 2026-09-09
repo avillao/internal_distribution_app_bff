@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamoDBTable(tableName = "application")
+@DynamoDBTable(tableName = "internal_distribution_app_dev_tbl_application")
 public class DynamoDBApplication {
     @DynamoDBHashKey(attributeName = "application_code")
     private String applicationCode;

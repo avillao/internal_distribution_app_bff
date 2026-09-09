@@ -56,6 +56,7 @@ public class DynamoDBArtifactRepository implements IArtifactRepository {
         queryExpression.setIndexName("created_index");
         queryExpression.setHashKeyValues(artifact);
         queryExpression.setScanIndexForward(false);
+        queryExpression.setConsistentRead(false);
 
         if (!queryFilter.isEmpty()){
             queryExpression.setQueryFilter(queryFilter);
@@ -91,6 +92,7 @@ public class DynamoDBArtifactRepository implements IArtifactRepository {
         queryExpression.setIndexName("created_index");
         queryExpression.setHashKeyValues(artifact);
         queryExpression.setScanIndexForward(false);
+        queryExpression.setConsistentRead(false);
 
         if (!queryFilter.isEmpty()) {
             queryExpression.setLimit(10);
