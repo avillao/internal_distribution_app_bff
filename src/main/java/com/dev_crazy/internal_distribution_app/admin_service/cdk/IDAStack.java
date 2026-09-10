@@ -13,10 +13,8 @@ public class IDAStack extends Stack {
 
     public IDAStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
-        final String STAGE = "dev";
-        final String REGION = System.getenv("AMAZON_AWS_REGION");
-        final String NAME_STACK_APPLICATION = "internal_distribution_app";
-        final String SCOPE_NAME = String.format("%s_scope", NAME_STACK_APPLICATION);
+        final String STAGE = System.getenv("SPRING_PROFILES_ACTIVE").toLowerCase().strip();
+        final String NAME_STACK_APPLICATION = System.getenv("KEYCLOAK_CLIENT_ID").toLowerCase().strip();
         final String STACK_NAME = String.format("%s_%s", NAME_STACK_APPLICATION, STAGE);
 
         final boolean isProduction = STAGE.equals(System.getenv("prd")) || STAGE.equals(System.getenv("prod"));

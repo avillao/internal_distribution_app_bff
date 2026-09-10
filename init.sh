@@ -9,7 +9,7 @@ set -euo pipefail
 KC_SERVER="${KEYCLOAK_BASE_URI:-http://keycloak:8080}"
 
 REALM="${KEYCLOAK_REALM:-mi-realm}"
-CLIENT_ID="internal_distribution_app"
+CLIENT_ID="${KEYCLOAK_CLIENT_ID:-internal_distribution_app}"
 
 KC_ADMIN_USER="${KC_BOOTSTRAP_ADMIN_USERNAME:-admin}"
 KC_ADMIN_PASSWORD="${KC_BOOTSTRAP_ADMIN_PASSWORD:-admin}"

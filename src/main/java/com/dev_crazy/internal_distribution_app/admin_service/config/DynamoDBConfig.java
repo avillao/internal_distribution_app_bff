@@ -6,6 +6,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,24 +26,40 @@ public class DynamoDBConfig {
     @Value("${amazon.aws.region}")
     private String amazonAWSRegion;
 
+    @Value("${spring.profiles.active}")
+    private String environment;
+
+    @Value("${keycloak.client_id}")
+    private String keycloakClientId;
 
     @Bean
-    public DynamoDBMapper dynamoDBMapper() {
-        return new DynamoDBMapper(buildAmazonDynamoDB());
-    }
-
-    private AmazonDynamoDB buildAmazonDynamoDB() {
+    public AmazonDynamoDB buildAmazonDynamoDB() {
         return AmazonDynamoDBClientBuilder
                 .standard()
                 .withEndpointConfiguration(
                         new AwsClientBuilder.EndpointConfiguration(
                                 amazonDynamoDBEndpoint,amazonAWSRegion)
                 )
-                /*.withCredentials(
+                .withCredentials(
                         new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials(amazonAWSAccessKey,amazonAWSSecretKey)
                         )
-                )*/
+                )
                 .build();
+    }
+
+    @Bean
+    public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB dynamoDB) {
+
+        DynamoDBMapperConfig config = DynamoDBMapperConfig.builder()
+                .withTableNameOverride(
+                        DynamoDBMapperConfig.TableNameOverride
+                                .withTableNamePrefix(
+                                        keycloakClientId + "_" + environment + "_"
+                                )
+                )
+                .build();
+
+        return new DynamoDBMapper(dynamoDB, config);
     }
 }
