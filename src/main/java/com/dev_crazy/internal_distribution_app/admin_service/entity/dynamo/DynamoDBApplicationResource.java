@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamoDBTable(tableName = "tbl_application_resource")
+@DynamoDBTable(tableName = "tbl-application-resource")
 public class DynamoDBApplicationResource {
     @DynamoDBHashKey(attributeName = "application_code")
     private String applicationCode;

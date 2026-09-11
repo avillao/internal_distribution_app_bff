@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 public class BinaryDetail {
     private String filename;
     private String type;
-    private Integer filesize;
-    private String checksum;
-    private String checksumtype;
+    private Long filesize;
+//    private String checksum;
+//    private String checksumtype;
     private String keypath;
     private String url;
 }

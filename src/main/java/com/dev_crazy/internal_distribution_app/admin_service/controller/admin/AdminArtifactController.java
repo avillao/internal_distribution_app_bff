@@ -4,17 +4,25 @@ import com.dev_crazy.internal_distribution_app.admin_service.dto.request.artifac
 import com.dev_crazy.internal_distribution_app.admin_service.dto.request.artifact.ArtifactFilterDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.response.ResponseDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.response.artifact.ArtifactInfoDTO;
+import com.dev_crazy.internal_distribution_app.admin_service.exception.BaseServiceException;
 import com.dev_crazy.internal_distribution_app.admin_service.model.Artifact;
+import com.dev_crazy.internal_distribution_app.admin_service.model.BinaryDetail;
+import com.dev_crazy.internal_distribution_app.admin_service.model.Platform;
 import com.dev_crazy.internal_distribution_app.admin_service.service.artifact.ArtifactService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -63,15 +71,59 @@ public class AdminArtifactController {
     }
 
     @GetMapping("application/{resourceApplicationCode}/artifact/{artifactCode}")
-    private ResponseEntity<ResponseDTO<Artifact>> findByCode(@PathVariable String resourceApplicationCode, @PathVariable String artifactCode) {
-        ResponseDTO<Artifact> response = new ResponseDTO<>();
+    private ResponseEntity<ResponseDTO<ArtifactInfoDTO>> findByCode(@PathVariable String resourceApplicationCode, @PathVariable String artifactCode) {
+        ResponseDTO<ArtifactInfoDTO> response = new ResponseDTO<>();
 
         Artifact artifact = artifactService.findByCode(resourceApplicationCode, artifactCode);
+        ArtifactInfoDTO artifactInfoDTO = modelMaper.map(artifact, ArtifactInfoDTO.class);
 
         response.setError(false);
         response.setMessage("OK");
         response.setStatus(200);
-        response.setData(artifact);
+        response.setData(artifactInfoDTO);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(
+            value="application/{resourceApplicationCode}/artifact/{artifactCode}",
+            consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
+    )
+    private ResponseEntity<ResponseDTO<String>> saveBinary(
+            @PathVariable String resourceApplicationCode,
+            @PathVariable String artifactCode,
+            @RequestParam("file") MultipartFile file
+    ) {
+        ResponseDTO<String> response = new ResponseDTO<>();
+
+        if (file.isEmpty()) {
+            throw new BaseServiceException("El archivo está vacio", 400, null);
+        }
+
+        String contentType = file.getContentType();
+
+        if(!contentType.equalsIgnoreCase("application/octet-stream") &&
+                !contentType.equalsIgnoreCase("application/x-itunes-ipa") &&
+                !contentType.equalsIgnoreCase("application/vnd.android.package-archive")
+        ){
+            throw new BaseServiceException("Tipo de archivo no permitido", 400, null);
+        }
+
+        BinaryDetail binaryDetail = new BinaryDetail();
+        binaryDetail.setType(contentType);
+        binaryDetail.setFilesize(file.getSize());
+        binaryDetail.setFilename(file.getOriginalFilename());
+
+        try {
+            artifactService.saveBinary(binaryDetail, file.getInputStream(), resourceApplicationCode, artifactCode);
+        }catch (Exception e) {
+            throw new BaseServiceException(e.getMessage(), 400, e);
+        }
+
+        response.setError(false);
+        response.setMessage("OK");
+        response.setStatus(200);
+        response.setData(null);
 
         return ResponseEntity.ok(response);
     }

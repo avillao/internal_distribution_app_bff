@@ -1,5 +1,6 @@
 package com.dev_crazy.internal_distribution_app.admin_service.dto.response.artifact;
 
+import com.dev_crazy.internal_distribution_app.admin_service.model.BinaryDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,5 @@ public class ArtifactInfoDTO {
     private Boolean enabled;
     private Date created;
     private Date updated;
+    private BinaryDetail binaryDetail;
 }

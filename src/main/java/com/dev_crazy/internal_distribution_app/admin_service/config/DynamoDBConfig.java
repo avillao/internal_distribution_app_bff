@@ -55,7 +55,7 @@ public class DynamoDBConfig {
                 .withTableNameOverride(
                         DynamoDBMapperConfig.TableNameOverride
                                 .withTableNamePrefix(
-                                        keycloakClientId + "_" + environment + "_"
+                                        keycloakClientId + "-" + environment + "-"
                                 )
                 )
                 .build();

@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamoDBTable(tableName = "tbl_artifact")
+@DynamoDBTable(tableName = "tbl-artifact")
 public class DynamoDBArtifact {
     @DynamoDBHashKey(attributeName = "resource_application_code")
     @DynamoDBIndexHashKey(globalSecondaryIndexName = "created_index")

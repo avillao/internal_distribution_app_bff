@@ -3,6 +3,7 @@ package com.dev_crazy.internal_distribution_app.admin_service.controller.user;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.response.ResponseDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.dto.response.artifact.ArtifactInfoDTO;
 import com.dev_crazy.internal_distribution_app.admin_service.model.Artifact;
+import com.dev_crazy.internal_distribution_app.admin_service.model.BinaryDetail;
 import com.dev_crazy.internal_distribution_app.admin_service.service.artifact.ArtifactService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,10 @@ public class ArtifactController {
         ResponseDTO<ArtifactInfoDTO> response = new ResponseDTO<>();
 
         Artifact artifact = artifactService.findLatest(resourceApplicationCode);
+        BinaryDetail binaryDetail = artifactService.getBinaryDetail(artifact.getArtifactId());
+
         ArtifactInfoDTO artifactInfoDTO = modelMaper.map(artifact, ArtifactInfoDTO.class);
+        artifactInfoDTO.setBinaryDetail(binaryDetail);
 
         response.setError(false);
         response.setMessage("OK");
