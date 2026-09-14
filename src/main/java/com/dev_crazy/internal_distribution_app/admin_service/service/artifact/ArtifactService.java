@@ -1,16 +1,13 @@
 package com.dev_crazy.internal_distribution_app.admin_service.service.artifact;
 
-import com.dev_crazy.internal_distribution_app.admin_service.exception.BaseServiceException;
 import com.dev_crazy.internal_distribution_app.admin_service.exception.artifact.ArtifactNotFoundException;
 import com.dev_crazy.internal_distribution_app.admin_service.exception.artifact.ArtifactVersionException;
 import com.dev_crazy.internal_distribution_app.admin_service.model.Artifact;
 import com.dev_crazy.internal_distribution_app.admin_service.model.BinaryDetail;
-import com.dev_crazy.internal_distribution_app.admin_service.model.Metadata;
 import com.dev_crazy.internal_distribution_app.admin_service.repository.dynamo.artifact.IArtifactBinaryRepository;
 import com.dev_crazy.internal_distribution_app.admin_service.repository.dynamo.artifact.IArtifactRepository;
 import com.dev_crazy.internal_distribution_app.admin_service.service.application.ApplicationService;
 import com.dev_crazy.internal_distribution_app.admin_service.service.storage.IStorageService;
-import com.dev_crazy.internal_distribution_app.admin_service.util.ExtractMetadataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.InputStream;
@@ -111,20 +108,7 @@ public class ArtifactService implements IArtifactService {
     @Override
     public Artifact saveBinary(BinaryDetail binaryDetail, InputStream inputStream, String resourceApplicationCode, String artifactCode) {
 
-        // TODO Relectura del InputStream para subida a S3
-        Metadata metadata = ExtractMetadataUtil.extractAndroidMetadata(inputStream);
-        try {
-            inputStream.reset();
-        }catch (Exception e){
-            throw new BaseServiceException(e.getMessage(), 500, e);
-        }
-
         Artifact artifact1 = this.findByCode(resourceApplicationCode, artifactCode);
-
-        if(!artifact1.getVersion().equalsIgnoreCase(metadata.getVersionName()) ||
-            !artifact1.getApplicationCode().equalsIgnoreCase(metadata.getPackageName())){
-            throw new BaseServiceException("Paquete o versión del ejecutable no coinciden", 400, null);
-        }
 
         String extension = binaryDetail.getFilename().substring(binaryDetail.getFilename().lastIndexOf(".") + 1);
         String filename = String.format("%s.%s.%s", resourceApplicationCode, artifact1.getVersion(), extension);

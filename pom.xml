@@ -36,10 +36,10 @@
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <!-- REPOSITORIO DE GOOGLE (Faltaba este) -->
-        <repository>
+        <!-- <repository>
             <id>google</id>
             <url>https://maven.google.com/</url>
-        </repository>
+        </repository> -->
     </repositories>
     <dependencies>
         <dependency>
@@ -139,11 +139,11 @@
             <version>2.267.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.android.tools.apkparser</groupId>
             <artifactId>apkanalyzer</artifactId>
             <version>32.4.0</version>
-        </dependency>
+        </dependency> -->
 </dependencies>
 
     <build>
