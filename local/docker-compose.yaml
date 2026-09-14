@@ -2,7 +2,7 @@ name: internal_distribution_app_bff
 services:
   keycloak_database:
     container_name: keycloak_database
-    image: postgres
+    image: postgres:17.4
     shm_size: 128mb
     environment:
       - POSTGRES_PASSWORD=${DB_PASS}

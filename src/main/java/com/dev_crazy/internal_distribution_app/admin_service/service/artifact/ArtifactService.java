@@ -111,6 +111,7 @@ public class ArtifactService implements IArtifactService {
     @Override
     public Artifact saveBinary(BinaryDetail binaryDetail, InputStream inputStream, String resourceApplicationCode, String artifactCode) {
 
+        // TODO Relectura del InputStream para subida a S3
         Metadata metadata = ExtractMetadataUtil.extractAndroidMetadata(inputStream);
         try {
             inputStream.reset();
