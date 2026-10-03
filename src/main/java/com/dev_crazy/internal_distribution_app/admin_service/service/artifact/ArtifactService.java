@@ -53,9 +53,14 @@ public class ArtifactService implements IArtifactService {
 
     @Override
     public BinaryDetail getBinaryDetail(String artifactCode) {
-        Optional<BinaryDetail> binaryDetail = artifactBinaryRepository.findById(artifactCode);
-        if (binaryDetail.isPresent()) {
-            return binaryDetail.get();
+        Optional<BinaryDetail> binaryDetailOptional = artifactBinaryRepository.findById(artifactCode);
+        if (binaryDetailOptional.isPresent()) {
+            BinaryDetail binaryDetail = binaryDetailOptional.get();
+            
+            String url = storageService.getObject(binaryDetail.getKeypath());
+            binaryDetail.setUrl(url);
+            
+            return binaryDetail;
         }else{
             throw new ArtifactNotFoundException();
         }
